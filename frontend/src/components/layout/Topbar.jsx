@@ -24,6 +24,7 @@ const ROUTE_META = {
   '/quotations':      { title: 'Quotations',        crumbs: ['Home', 'Procurement', 'Quotations'] },
   '/approvals':       { title: 'Approvals',         crumbs: ['Home', 'Procurement', 'Approvals'] },
   '/purchase-orders': { title: 'Purchase Orders',   crumbs: ['Home', 'Procurement', 'Purchase Orders'] },
+  '/purchase-orders/:id': { title: 'Invoice Detail', crumbs: ['Home', 'Procurement', 'Purchase Orders', 'Detail'] },
   '/invoices':        { title: 'Invoices',          crumbs: ['Home', 'Procurement', 'Invoices'] },
   '/analytics':       { title: 'Reports',           crumbs: ['Home', 'Insights', 'Reports'] },
   '/activity':        { title: 'Activity',          crumbs: ['Home', 'Insights', 'Activity'] },
@@ -102,6 +103,10 @@ const Topbar = ({ onMenuClick }) => {
   const meta = ROUTE_META[location.pathname] || (
     location.pathname.startsWith('/vendors/')
       ? { title: 'Vendor Detail', crumbs: ['Home', 'Vendors', 'Detail'] }
+      : location.pathname.startsWith('/purchase-orders/')
+      ? { title: 'Invoice Detail', crumbs: ['Home', 'Procurement', 'Purchase Orders', 'Detail'] }
+      : location.pathname.startsWith('/approvals/')
+      ? { title: 'Approval Detail', crumbs: ['Home', 'Procurement', 'Approvals', 'Detail'] }
       : { title: 'VendorBridge', crumbs: ['Home'] }
   );
 

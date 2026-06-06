@@ -13,6 +13,7 @@ INSERT INTO users (first_name, last_name, email, password_hash, phone, role) VAL
 ('John', 'Admin', 'john.admin@vendorbridge.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0101', 'admin'),
 ('Sarah', 'Johnson', 'sarah.procurement@vendorbridge.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0102', 'procurement_officer'),
 ('Mike', 'Manager', 'mike.manager@vendorbridge.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0103', 'manager'),
+('Linda', 'Finance', 'linda.finance@vendorbridge.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0104', 'manager'),
 ('Vendor', 'One', 'vendor1@example.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0201', 'vendor'),
 ('Vendor', 'Two', 'vendor2@example.com', '$2b$10$XGZzY5Z5Z5Z5Z5Z5Z5Z5ZOZzY5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', '+1-555-0202', 'vendor');
 
@@ -132,14 +133,18 @@ INSERT INTO quotation_line_items (quotation_id, item_name, quantity, unit_price,
 -- =============================================
 
 INSERT INTO approvals (rfq_id, quotation_id, approver_id, level, status, remarks, actioned_at) VALUES
--- Approval for Quotation 3 (Laptops) - Approved
+-- Approval chain for Quotation 3 (Laptops) - Both levels approved
 (2, 3, 3, 1, 'approved', 'Good pricing and specifications meet requirements.', '2026-06-16 10:00:00'),
--- Approval for Quotation 6 (Raw Materials) - Approved
+(2, 3, 4, 2, 'approved', 'Budget approved. Proceed with purchase order.', '2026-06-16 14:00:00'),
+-- Approval chain for Quotation 6 (Raw Materials) - Both levels approved
 (5, 6, 3, 1, 'approved', 'Better pricing and faster delivery than competitor.', '2026-05-22 15:30:00'),
--- Approval for Quotation 5 (Raw Materials) - Rejected
+(5, 6, 4, 2, 'approved', 'Approved for procurement.', '2026-05-22 16:00:00'),
+-- Approval chain for Quotation 5 (Raw Materials) - Rejected at Level 1
 (5, 5, 3, 1, 'rejected', 'Pricing too high compared to alternative vendor.', '2026-05-22 15:30:00'),
--- Pending approval for Quotation 1
-(1, 1, 3, 1, 'pending', NULL, NULL);
+(5, 5, 4, 2, 'rejected', 'Auto-rejected due to rejection at level 1', '2026-05-22 15:30:00'),
+-- Pending 2-level approval chain for Quotation 1
+(1, 1, 3, 1, 'pending', NULL, NULL),
+(1, 1, 4, 2, 'pending', NULL, NULL);
 
 -- =============================================
 -- SEED PURCHASE ORDERS
@@ -153,25 +158,37 @@ INSERT INTO purchase_orders (po_number, rfq_id, quotation_id, vendor_id, status,
 -- SEED ACTIVITY LOGS
 -- =============================================
 
-INSERT INTO activity_logs (user_id, action, entity_type, entity_id, description) VALUES
-(2, 'CREATE', 'RFQ', 1, 'Created RFQ: Office Furniture for New Branch'),
-(2, 'CREATE', 'RFQ', 2, 'Created RFQ: Laptop Procurement Q3 2026'),
-(2, 'PUBLISH', 'RFQ', 1, 'Published RFQ: Office Furniture for New Branch'),
-(2, 'PUBLISH', 'RFQ', 2, 'Published RFQ: Laptop Procurement Q3 2026'),
-(2, 'ASSIGN_VENDOR', 'RFQ', 1, 'Assigned vendor: Office Essentials Ltd to RFQ #1'),
-(2, 'ASSIGN_VENDOR', 'RFQ', 1, 'Assigned vendor: Industrial Solutions to RFQ #1'),
-(2, 'ASSIGN_VENDOR', 'RFQ', 2, 'Assigned vendor: TechSupplies Inc to RFQ #2'),
-(4, 'SUBMIT', 'QUOTATION', 1, 'Submitted quotation for RFQ #1'),
-(5, 'SUBMIT', 'QUOTATION', 2, 'Submitted quotation for RFQ #1'),
-(4, 'SUBMIT', 'QUOTATION', 3, 'Submitted quotation for RFQ #2'),
-(3, 'APPROVE', 'QUOTATION', 3, 'Approved quotation #3 for RFQ #2'),
-(2, 'CREATE', 'PURCHASE_ORDER', 1, 'Created Purchase Order: PO-2026-001'),
-(2, 'APPROVE', 'PURCHASE_ORDER', 1, 'Approved Purchase Order: PO-2026-001'),
-(2, 'PAYMENT_COMPLETED', 'PURCHASE_ORDER', 1, 'Payment completed for PO-2026-001'),
-(2, 'CREATE', 'VENDOR', 1, 'Created vendor: TechSupplies Inc'),
-(2, 'CREATE', 'VENDOR', 2, 'Created vendor: Office Essentials Ltd'),
-(2, 'UPDATE', 'VENDOR', 1, 'Updated vendor status to active: TechSupplies Inc'),
-(2, 'BLOCK', 'VENDOR', 6, 'Blocked vendor: Quality Materials - Reason: Delayed deliveries');
+INSERT INTO activity_logs (user_id, action, entity_type, entity_id, description, created_at) VALUES
+(2, 'CREATE', 'rfq', 1, 'Created RFQ: Office Furniture for New Branch', '2026-06-01 09:00:00'),
+(2, 'CREATE', 'rfq', 2, 'Created RFQ: Laptop Procurement Q3 2026', '2026-06-01 10:30:00'),
+(2, 'PUBLISH', 'rfq', 1, 'Published RFQ: Office Furniture for New Branch', '2026-06-01 11:00:00'),
+(2, 'PUBLISH', 'rfq', 2, 'Published RFQ: Laptop Procurement Q3 2026', '2026-06-01 14:00:00'),
+(2, 'ASSIGN_VENDOR', 'rfq', 1, 'Assigned vendor: Office Essentials Ltd to RFQ #1', '2026-06-01 14:30:00'),
+(2, 'ASSIGN_VENDOR', 'rfq', 1, 'Assigned vendor: Industrial Solutions to RFQ #1', '2026-06-01 14:35:00'),
+(2, 'ASSIGN_VENDOR', 'rfq', 2, 'Assigned vendor: TechSupplies Inc to RFQ #2', '2026-06-01 15:00:00'),
+(5, 'SUBMIT', 'quotation', 1, 'Submitted quotation for RFQ: Office Furniture for New Branch', '2026-06-05 14:30:00'),
+(5, 'SUBMIT', 'quotation', 2, 'Submitted quotation for RFQ: Office Furniture for New Branch', '2026-06-06 10:15:00'),
+(5, 'SUBMIT', 'quotation', 3, 'Submitted quotation for RFQ: Laptop Procurement Q3 2026', '2026-06-15 16:00:00'),
+(3, 'APPROVE', 'approval', 1, 'Approved quotation #3 for RFQ: Laptop Procurement Q3 2026', '2026-06-16 10:00:00'),
+(4, 'APPROVE', 'approval', 2, 'Final approval for quotation #3 - authorized for PO creation', '2026-06-16 14:00:00'),
+(2, 'CREATE', 'invoice', 1, 'Created Purchase Order: PO-2026-001 for TechSupplies Inc', '2026-06-17 09:00:00'),
+(2, 'APPROVE', 'invoice', 1, 'Approved Purchase Order: PO-2026-001', '2026-06-17 10:00:00'),
+(2, 'PAYMENT_COMPLETED', 'invoice', 1, 'Payment completed for PO-2026-001 (₹146,320.00)', '2026-06-18 15:30:00'),
+(2, 'CREATE', 'vendor', 1, 'Created vendor: TechSupplies Inc', '2026-05-15 10:00:00'),
+(2, 'CREATE', 'vendor', 2, 'Created vendor: Office Essentials Ltd', '2026-05-15 10:30:00'),
+(2, 'UPDATE', 'vendor', 1, 'Updated vendor status to active: TechSupplies Inc', '2026-05-15 11:00:00'),
+(2, 'BLOCK', 'vendor', 6, 'Blocked vendor: Quality Materials - Reason: Delayed deliveries', '2026-05-28 14:00:00'),
+(2, 'CREATE', 'rfq', 3, 'Created RFQ: Annual Stationery Supply', '2026-05-20 09:00:00'),
+(2, 'PUBLISH', 'rfq', 3, 'Published RFQ: Annual Stationery Supply', '2026-05-20 09:30:00'),
+(5, 'SUBMIT', 'quotation', 4, 'Submitted quotation for RFQ: Annual Stationery Supply', '2026-06-10 11:00:00'),
+(3, 'APPROVE', 'approval', 3, 'Approved quotation #6 for RFQ: Raw Material Supply Q3', '2026-05-22 15:30:00'),
+(4, 'APPROVE', 'approval', 4, 'Final approval for quotation #6 - authorized for PO creation', '2026-05-22 16:00:00'),
+(2, 'CREATE', 'invoice', 2, 'Created Purchase Order: PO-2026-002 for Industrial Solutions', '2026-05-23 09:00:00'),
+(2, 'UPDATE', 'vendor', 3, 'Updated contact information for vendor: Industrial Solutions', '2026-06-03 10:30:00'),
+(3, 'REJECT', 'approval', 5, 'Rejected quotation #5 - Pricing too high compared to alternatives', '2026-05-22 15:30:00'),
+(2, 'CREATE', 'vendor', 4, 'Created vendor: Green Energy Corp', '2026-05-20 14:00:00'),
+(2, 'CREATE', 'rfq', 4, 'Created RFQ: Solar Panel Installation', '2026-06-04 10:00:00'),
+(2, 'ASSIGN_VENDOR', 'rfq', 4, 'Assigned vendor: Green Energy Corp to RFQ #4', '2026-06-04 10:30:00');
 
 -- =============================================
 -- MIGRATION COMPLETE
@@ -181,5 +198,6 @@ DO $$
 BEGIN
   RAISE NOTICE 'Migration 002_seed_data.sql completed successfully!';
   RAISE NOTICE 'Inserted sample data for testing and development.';
-  RAISE NOTICE 'Users: 5, Vendors: 6, RFQs: 5, Quotations: 6, POs: 2';
+  RAISE NOTICE 'Users: 6 (1 admin, 1 officer, 2 managers, 2 vendors), Vendors: 6, RFQs: 5, Quotations: 6, POs: 2';
+  RAISE NOTICE 'Approval workflow: 2-level approval chain (Procurement Head + Finance Approver)';
 END $$;

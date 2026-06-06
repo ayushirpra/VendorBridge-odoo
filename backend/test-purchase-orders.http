@@ -1,0 +1,176 @@
+### VendorBridge Purchase Order & Invoice API Tests
+### Use REST Client extension in VS Code to run these tests
+
+@baseUrl = http://localhost:5000/api
+@procurementToken = YOUR_PROCUREMENT_TOKEN_HERE
+@managerToken = YOUR_MANAGER_TOKEN_HERE
+
+### 1. Login as Procurement Officer
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "sarah.procurement@vendorbridge.com",
+  "password": "password123"
+}
+
+### 2. Login as Manager
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "mike.manager@vendorbridge.com",
+  "password": "password123"
+}
+
+### 3. Create Purchase Order from approved quotation
+# First make sure quotation #3 has all approvals completed
+# Then create PO
+POST {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "quotation_id": 3
+}
+
+### 4. List all Purchase Orders
+GET {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+
+### 5. List Purchase Orders filtered by status
+GET {{baseUrl}}/purchase-orders?status=approved
+Authorization: Bearer {{procurementToken}}
+
+### 6. List Purchase Orders filtered by vendor
+GET {{baseUrl}}/purchase-orders?vendor_id=1
+Authorization: Bearer {{procurementToken}}
+
+### 7. Get Purchase Order detail (replace 1 with actual PO ID)
+GET {{baseUrl}}/purchase-orders/1
+Authorization: Bearer {{procurementToken}}
+
+### 8. Update Purchase Order status to pending_payment
+PATCH {{baseUrl}}/purchase-orders/1/status
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "status": "pending_payment"
+}
+
+### 9. Update Purchase Order status to paid
+PATCH {{baseUrl}}/purchase-orders/1/status
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "status": "paid"
+}
+
+### 10. Get Invoice data for Purchase Order
+GET {{baseUrl}}/purchase-orders/1/invoice
+Authorization: Bearer {{procurementToken}}
+
+### 11. Send Invoice to vendor (simulated email)
+POST {{baseUrl}}/purchase-orders/1/send-invoice
+Authorization: Bearer {{procurementToken}}
+
+### ========================================
+### COMPLETE WORKFLOW TEST
+### ========================================
+
+### STEP 1: Check existing quotations with full approvals
+GET {{baseUrl}}/quotations/3
+Authorization: Bearer {{procurementToken}}
+
+### STEP 2: Create PO from fully approved quotation
+POST {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "quotation_id": 3
+}
+
+### STEP 3: Verify PO was created
+GET {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+
+### STEP 4: Get full PO details
+GET {{baseUrl}}/purchase-orders/1
+Authorization: Bearer {{procurementToken}}
+
+### STEP 5: Generate invoice data
+GET {{baseUrl}}/purchase-orders/1/invoice
+Authorization: Bearer {{procurementToken}}
+
+### STEP 6: Send invoice to vendor
+POST {{baseUrl}}/purchase-orders/1/send-invoice
+Authorization: Bearer {{procurementToken}}
+
+### STEP 7: Update status to pending_payment
+PATCH {{baseUrl}}/purchase-orders/1/status
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "status": "pending_payment"
+}
+
+### STEP 8: Mark as paid
+PATCH {{baseUrl}}/purchase-orders/1/status
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "status": "paid"
+}
+
+### STEP 9: Verify final status
+GET {{baseUrl}}/purchase-orders/1
+Authorization: Bearer {{procurementToken}}
+
+### ========================================
+### ERROR SCENARIOS
+### ========================================
+
+### ERROR 1: Try to create PO from non-approved quotation
+POST {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "quotation_id": 1
+}
+
+### ERROR 2: Try to create PO from non-existent quotation
+POST {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "quotation_id": 9999
+}
+
+### ERROR 3: Try to create duplicate PO
+POST {{baseUrl}}/purchase-orders
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "quotation_id": 3
+}
+
+### ERROR 4: Invalid status update
+PATCH {{baseUrl}}/purchase-orders/1/status
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+{
+  "status": "invalid_status"
+}
+
+### ERROR 5: Get non-existent PO
+GET {{baseUrl}}/purchase-orders/9999
+Authorization: Bearer {{procurementToken}}

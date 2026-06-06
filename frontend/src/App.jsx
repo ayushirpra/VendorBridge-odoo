@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { queryClient } from './lib/queryClient';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -17,6 +18,12 @@ import CreateRFQ from './pages/CreateRFQ';
 import Quotations from './pages/Quotations';
 import SubmitQuotation from './pages/SubmitQuotation';
 import QuotationCompare from './pages/QuotationCompare';
+import Approvals from './pages/Approvals';
+import ApprovalDetail from './pages/ApprovalDetail';
+import PurchaseOrders from './pages/PurchaseOrders';
+import PurchaseOrderDetail from './pages/PurchaseOrderDetail';
+import ActivityLogs from './pages/ActivityLogs';
+import Reports from './pages/Reports';
 import './App.css';
 
 // ── Placeholder pages for nav routes not yet built ──────────────────────────
@@ -34,6 +41,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <Toaster position="top-right" />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
@@ -59,11 +67,14 @@ function App() {
               <Route path="rfqs/:id/compare" element={<QuotationCompare />} />
               <Route path="quotations"     element={<Quotations />} />
               <Route path="quotations/submit/:rfqId" element={<SubmitQuotation />} />
-              <Route path="approvals"      element={<PlaceholderPage title="Approvals" />} />
-              <Route path="purchase-orders" element={<PlaceholderPage title="Purchase Orders" />} />
+              <Route path="approvals"      element={<Approvals />} />
+              <Route path="approvals/:id"  element={<ApprovalDetail />} />
+              <Route path="purchase-orders" element={<PurchaseOrders />} />
+              <Route path="purchase-orders/:id" element={<PurchaseOrderDetail />} />
               <Route path="invoices"       element={<PlaceholderPage title="Invoices" />} />
               <Route path="analytics"      element={<Analytics />} />
-              <Route path="activity"       element={<PlaceholderPage title="Activity" />} />
+              <Route path="activity"       element={<ActivityLogs />} />
+              <Route path="reports"        element={<Reports />} />
               <Route path="settings"       element={<Settings />} />
               <Route path="profile"        element={<PlaceholderPage title="My Profile" />} />
             </Route>
