@@ -14,6 +14,9 @@ import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import RFQs from './pages/RFQs';
 import CreateRFQ from './pages/CreateRFQ';
+import Quotations from './pages/Quotations';
+import SubmitQuotation from './pages/SubmitQuotation';
+import QuotationCompare from './pages/QuotationCompare';
 import './App.css';
 
 // ── Placeholder pages for nav routes not yet built ──────────────────────────
@@ -53,7 +56,9 @@ function App() {
               <Route path="vendors/:id"    element={<VendorDetail />} />
               <Route path="rfqs"           element={<RFQs />} />
               <Route path="rfqs/new"       element={<CreateRFQ />} />
-              <Route path="quotations"     element={<PlaceholderPage title="Quotations" />} />
+              <Route path="rfqs/:id/compare" element={<QuotationCompare />} />
+              <Route path="quotations"     element={<Quotations />} />
+              <Route path="quotations/submit/:rfqId" element={<SubmitQuotation />} />
               <Route path="approvals"      element={<PlaceholderPage title="Approvals" />} />
               <Route path="purchase-orders" element={<PlaceholderPage title="Purchase Orders" />} />
               <Route path="invoices"       element={<PlaceholderPage title="Invoices" />} />

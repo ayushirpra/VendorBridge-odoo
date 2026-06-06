@@ -107,6 +107,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vendors', require('./routes/vendors'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/rfqs', require('./routes/rfqs'));
+app.use('/api/quotations', require('./routes/quotations'));
 
 // Protected route example with role-based access
 /**
