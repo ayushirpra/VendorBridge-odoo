@@ -339,19 +339,5 @@ PATCH /api/approvals/1/action
 - ✅ Form validation and error handling
 - ✅ Optimistic UI updates
 
-### Documentation
 
-For detailed documentation, see:
-- **Backend**: [APPROVAL_WORKFLOW.md](backend/APPROVAL_WORKFLOW.md)
-- **Frontend**: [FRONTEND_APPROVALS_GUIDE.md](FRONTEND_APPROVALS_GUIDE.md)
-- **Full-Stack**: [FULLSTACK_APPROVAL_COMPLETE.md](FULLSTACK_APPROVAL_COMPLETE.md)
-- **Quick Start**: [QUICK_START_APPROVALS.md](QUICK_START_APPROVALS.md)
-
-### Test Users
-
-**Password for all users: `password123`**
-
-- **Procurement Officer**: sarah.procurement@vendorbridge.com
-- **Procurement Head (Level 1)**: mike.manager@vendorbridge.com
-- **Finance Approver (Level 2)**: linda.finance@vendorbridge.com
 
