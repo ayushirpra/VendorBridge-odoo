@@ -12,6 +12,8 @@ import Vendors from './pages/Vendors';
 import VendorDetail from './pages/VendorDetail';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import RFQs from './pages/RFQs';
+import CreateRFQ from './pages/CreateRFQ';
 import './App.css';
 
 // ── Placeholder pages for nav routes not yet built ──────────────────────────
@@ -49,7 +51,8 @@ function App() {
               <Route path="dashboard"      element={<Dashboard />} />
               <Route path="vendors"        element={<Vendors />} />
               <Route path="vendors/:id"    element={<VendorDetail />} />
-              <Route path="rfqs"           element={<PlaceholderPage title="RFQ's" />} />
+              <Route path="rfqs"           element={<RFQs />} />
+              <Route path="rfqs/new"       element={<CreateRFQ />} />
               <Route path="quotations"     element={<PlaceholderPage title="Quotations" />} />
               <Route path="approvals"      element={<PlaceholderPage title="Approvals" />} />
               <Route path="purchase-orders" element={<PlaceholderPage title="Purchase Orders" />} />

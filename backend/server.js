@@ -106,6 +106,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/vendors', require('./routes/vendors'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/rfqs', require('./routes/rfqs'));
 
 // Protected route example with role-based access
 /**
