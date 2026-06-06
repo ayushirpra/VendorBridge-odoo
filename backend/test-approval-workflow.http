@@ -1,0 +1,105 @@
+### VendorBridge Approval Workflow API Tests
+### Use REST Client extension in VS Code to run these tests
+
+@baseUrl = http://localhost:5000/api
+@procurementToken = YOUR_PROCUREMENT_TOKEN_HERE
+@manager1Token = YOUR_MANAGER1_TOKEN_HERE
+@manager2Token = YOUR_MANAGER2_TOKEN_HERE
+
+### 1. Login as Procurement Officer (Sarah)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "sarah.procurement@vendorbridge.com",
+  "password": "password123"
+}
+
+### 2. Login as Manager 1 (Mike - Procurement Head)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "mike.manager@vendorbridge.com",
+  "password": "password123"
+}
+
+### 3. Login as Manager 2 (Linda - Finance Approver)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "linda.finance@vendorbridge.com",
+  "password": "password123"
+}
+
+### 4. List all submitted quotations for an RFQ (as Procurement Officer)
+GET {{baseUrl}}/quotations?rfq_id=1
+Authorization: Bearer {{procurementToken}}
+
+### 5. Select a quotation (creates 2-level approval chain)
+PATCH {{baseUrl}}/quotations/1/select
+Authorization: Bearer {{procurementToken}}
+Content-Type: application/json
+
+### 6. List all approvals (as Manager 1)
+GET {{baseUrl}}/approvals?status=pending
+Authorization: Bearer {{manager1Token}}
+
+### 7. Get approval detail (as Manager 1)
+GET {{baseUrl}}/approvals/1
+Authorization: Bearer {{manager1Token}}
+
+### 8. Approve Level 1 (as Manager 1 - Mike)
+PATCH {{baseUrl}}/approvals/1/action
+Authorization: Bearer {{manager1Token}}
+Content-Type: application/json
+
+{
+  "action": "approved",
+  "remarks": "Pricing is competitive and meets our requirements. Vendor has good track record."
+}
+
+### 9. List approvals (as Manager 2 - Linda)
+GET {{baseUrl}}/approvals?status=pending
+Authorization: Bearer {{manager2Token}}
+
+### 10. Get approval detail for Level 2 (as Manager 2)
+GET {{baseUrl}}/approvals/2
+Authorization: Bearer {{manager2Token}}
+
+### 11. Approve Level 2 (as Manager 2 - Linda)
+PATCH {{baseUrl}}/approvals/2/action
+Authorization: Bearer {{manager2Token}}
+Content-Type: application/json
+
+{
+  "action": "approved",
+  "remarks": "Budget approved. Proceed with purchase order creation."
+}
+
+### 12. Verify quotation is ready for PO (check approval chain)
+GET {{baseUrl}}/approvals/1
+Authorization: Bearer {{procurementToken}}
+
+### 13. REJECTION FLOW - Reject at Level 1
+PATCH {{baseUrl}}/approvals/3/action
+Authorization: Bearer {{manager1Token}}
+Content-Type: application/json
+
+{
+  "action": "rejected",
+  "remarks": "Pricing exceeds budget. Need to renegotiate or select alternative vendor."
+}
+
+### 14. Filter approvals by RFQ
+GET {{baseUrl}}/approvals?rfq_id=1
+Authorization: Bearer {{procurementToken}}
+
+### 15. View all completed approvals
+GET {{baseUrl}}/approvals?status=approved
+Authorization: Bearer {{procurementToken}}
+
+### 16. View all rejected approvals
+GET {{baseUrl}}/approvals?status=rejected
+Authorization: Bearer {{procurementToken}}

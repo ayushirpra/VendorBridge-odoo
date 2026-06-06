@@ -39,7 +39,7 @@ const NAV_SECTIONS = [
   {
     label: 'INSIGHTS',
     items: [
-      { name: 'Reports',        path: '/analytics',        icon: BarChart2,       roles: ['admin', 'procurement_officer', 'manager'] },
+      { name: 'Reports',        path: '/reports',          icon: BarChart2,       roles: ['admin', 'procurement_officer', 'manager'] },
       { name: 'Activity',       path: '/activity',         icon: Activity,        roles: ['admin', 'procurement_officer', 'manager'] },
     ],
   },
