@@ -1,7 +1,7 @@
 {
-  "name": "frontend",
+  "name": "vendorbridge-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,12 @@
   },
   "dependencies": {
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^6.20.0",
+    "axios": "^1.6.2",
+    "@tanstack/react-query": "^5.12.2",
+    "recharts": "^2.10.3",
+    "lucide-react": "^0.263.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -22,6 +27,9 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "tailwindcss": "^3.3.6",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16"
   }
 }
